@@ -71,13 +71,13 @@ func (d MyDecoder) Printlen(persons []Person, places []Place) {
 /*-------------------------------------------------------------*/
 
 type Person struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
+	Name string
+	Age  int
 }
 
 type Place struct {
-	City    string `json:"city"`
-	Country string `json:"country"`
+	City    string
+	Country string
 }
 
 type AllThings struct {
