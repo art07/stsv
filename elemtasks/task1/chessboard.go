@@ -16,7 +16,6 @@ var strForTask1 = "\ntask1 is a tool for printing chessboard.\n" +
 	"\targ3 one of [#$%&*+@_~^] (\"*\")."
 
 func main() {
-	//fmt.Println(os.Args)
 	if len(os.Args) == 1 {
 		fmt.Println(strForTask1)
 		return

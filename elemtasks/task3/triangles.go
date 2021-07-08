@@ -25,6 +25,10 @@ func main() {
 		snr := bufio.NewScanner(os.Stdin)
 		snr.Scan()
 		dataArr := strings.Split(snr.Text(), ",")
+		if snr.Err() != nil {
+			fmt.Println("Scanner error")
+			continue
+		}
 		if len(dataArr) != 4 {
 			fmt.Println("Wrong input")
 			continue
