@@ -19,7 +19,6 @@ var strForTask4 = "\ntask4 is a tool for jobs with files.\n" +
 	"\targ2 search string (\"any string\");\n" +
 	"\targ3 change string (\"any string\")."
 
-//goland:noinspection GoPrintFunctions
 func main() {
 	switch len(args) {
 	case 2:
@@ -43,7 +42,6 @@ func main() {
 	}
 }
 
-//goland:noinspection GoUnhandledErrorResult
 func numberOfOccurrences() (int, error) {
 	buf, err := ioutil.ReadFile(args[0])
 	if err != nil {
@@ -52,7 +50,6 @@ func numberOfOccurrences() (int, error) {
 	return strings.Count(string(buf), args[1]), nil
 }
 
-//goland:noinspection GoUnhandledErrorResult
 func changeText() error {
 	buf, err := ioutil.ReadFile(args[0])
 	if err != nil {
