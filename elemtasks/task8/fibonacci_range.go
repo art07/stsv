@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var strForTask8 = "\ntask8 is a tool which allows to display all Fibonacci numbers that are in the specified range.\n" +
@@ -36,15 +37,15 @@ func main() {
 	}
 
 	/*Числа фибоначи определенного диапазона.*/
-	var newFiboArray []uint64
+	str := fmt.Sprintf("Range [%d] - [%d] > \n", i1, i2)
 	for _, number := range fiboArray {
 		if number >= i1 && number <= i2 {
-			newFiboArray = append(newFiboArray, number)
+			str += fmt.Sprintf("%d,", number)
 		}
 	}
 
 	/*Вывод результата.*/
-	fmt.Printf("Range [%d] - [%d] > %v\n", i1, i2, newFiboArray)
+	fmt.Println(strings.TrimRight(str, ","))
 }
 
 func fibonacciFunc() func() uint64 {
