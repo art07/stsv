@@ -104,7 +104,6 @@ func recursiveFunc(numberToConvert int) (textNumber string) {
 
 /*Попытка получить число из аргумента.*/
 func getNumber() (int, error) {
-	fmt.Println(os.Args[1])
 	i, err := strconv.Atoi(os.Args[1])
 	if err != nil {
 		return 0, err
