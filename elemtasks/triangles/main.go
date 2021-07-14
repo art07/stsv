@@ -1,43 +1,50 @@
 package main
 
 import (
-	"bufio"
+	"errors"
 	"fmt"
 	"math"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
 )
 
 type triangle struct {
-	Name string
-	Area float64
+	Name  string
+	Side1 float64
+	Side2 float64
+	Side3 float64
+	Area  float64
 }
 
-var triangles = make([]triangle, 0, 8)
+var triangles = make([]*triangle, 0, 8)
 
 const header = "============= Triangles list: ===============\n"
 
 func main() {
 	for {
-		fmt.Print("<имя>, <длина стороны>, <длина стороны>, <длина стороны>: ")
-		snr := bufio.NewScanner(os.Stdin)
-		snr.Scan()
-		dataArr := strings.Split(snr.Text(), ",")
-		if snr.Err() != nil {
-			fmt.Println("Scanner error")
-			continue
-		}
-		if len(dataArr) != 4 {
-			fmt.Println("Wrong input")
-			continue
-		}
-		err := setNewDataToStruct(dataArr)
+		var input string
+		fmt.Print("<имя>,<длина стороны>,<длина стороны>,<длина стороны>: ")
+		_, err := fmt.Scan(&input)
 		if err != nil {
-			fmt.Println("setNewDataToStruct failed")
+			fmt.Println(err)
 			continue
 		}
+
+		dataArr := strings.Split(input, ",")
+
+		if len(dataArr) != 4 {
+			fmt.Println("Not enough data")
+			continue
+		}
+
+		tnl, err := createTriangle(dataArr)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		triangles = append(triangles, tnl)
 
 		fmt.Print("To continue: 'y' or 'yes') > ")
 		var answer string
@@ -53,27 +60,45 @@ func main() {
 	}
 }
 
-func setNewDataToStruct(arr []string) error {
-	var side1, side2, side3, area float64
+func createTriangle(arr []string) (*triangle, error) {
+	var side1, side2, side3 float64
 	name := arr[0]
 	side1, err := strconv.ParseFloat(arr[1], 64)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	side2, err = strconv.ParseFloat(arr[2], 64)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	side3, err = strconv.ParseFloat(arr[3], 64)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	tnl := &triangle{
+		Name:  name,
+		Side1: side1,
+		Side2: side2,
+		Side3: side3,
+	}
+
+	ok := isTriangle(tnl)
+	if !ok {
+		return nil, errors.New("figure not triangle")
 	}
 
 	p := (side1 + side2 + side3) / 2
-	area = math.Sqrt(p * (p - side1) * (p - side2) * (p - side3))
+	tnl.Area = math.Sqrt(p * (p - side1) * (p - side2) * (p - side3))
 
-	triangles = append(triangles, triangle{Name: name, Area: area})
-	return nil
+	return tnl, nil
+}
+
+func isTriangle(t *triangle) (b bool) {
+	if t.Side1+t.Side2 > t.Side3 && t.Side1+t.Side3 > t.Side2 && t.Side2+t.Side3 > t.Side1 {
+		b = true
+	}
+	return
 }
 
 func isYes(answer string) (b bool) {
