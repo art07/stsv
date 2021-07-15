@@ -12,7 +12,7 @@ var triangles = make([]*triangle, 0, 8)
 var input string
 var dataArr []string
 
-const header = "============= Triangles list: ===============\n"
+const header = "\n============= Triangles list: ===============\n"
 
 func main() {
 	for {
