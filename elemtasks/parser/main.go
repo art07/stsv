@@ -41,14 +41,14 @@ func main() {
 			return
 		}
 		fmt.Printf("Mode #1\n[%s] meets %d time(s)\n", fSearch, i)
-	} else {
-		fmt.Println("Mode #2")
-		if err := changeText(); err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println("Mode #2 finished!")
+		return
 	}
+	fmt.Println("Mode #2")
+	if err := changeText(); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Mode #2 finished!")
 }
 
 func numberOfOccurrences() (int, error) {
