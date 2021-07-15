@@ -1,6 +1,9 @@
 package main
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type triangle struct {
 	Name  string
@@ -20,4 +23,8 @@ func (t *triangle) isTriangle() (b bool) {
 func (t *triangle) setHeronArea() {
 	p := (t.Side1 + t.Side2 + t.Side3) / 2
 	t.Area = math.Sqrt(p * (p - t.Side1) * (p - t.Side2) * (p - t.Side3))
+}
+
+func (t *triangle) getString() string {
+	return fmt.Sprintf("[%s]: %.2f сm", t.Name, t.Area)
 }

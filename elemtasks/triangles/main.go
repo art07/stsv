@@ -107,7 +107,7 @@ func prepareAnswer() (s string) {
 		if i == 0 {
 			s += header
 		}
-		s += fmt.Sprintf("%d. [%s]: %.2f сm\n", i+1, (*t).Name, (*t).Area)
+		s += fmt.Sprintf("%d. %s\n", i+1, t.getString())
 	}
 	return
 }
