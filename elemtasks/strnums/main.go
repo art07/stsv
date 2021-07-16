@@ -1,47 +1,41 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 	"strconv"
 	"unicode/utf8"
 )
 
-var strForTask5 = "\ntask5 is a tool to convert numbers.\n" +
-	"Convert numbers to string view. Max value => 100000.\n" +
+var strForTask5 = "task5 is a tool to convert numbers.\n" +
+	"Convert numbers to string view. Max value => 100000; min value => 1.\n" +
 	"Args:\n" +
-	"\targ1 number (MAX> 100000)."
+	"\targ1 number (12345)."
 
 var numbersMap = map[int]string{
 	1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
 	10: "ten", 11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen", 15: "fifteen", 16: "sixteen",
 	17: "seventeen", 18: "eighteen", 19: "nineteen", 20: "twenty",
-	/*------------*/
+
 	30: "thirty", 40: "forty", 50: "fifty", 60: "sixty", 70: "seventy", 80: "eighty", 90: "ninety",
 }
 
+var number int
+
 func main() {
-	/*Если не 2 аргумента strForTask5.*/
-	if len(os.Args) != 2 {
+	flag.IntVar(&number, "n", 0, "user number")
+	flag.Parse()
+
+	if number < 1 || number > 100000 {
 		fmt.Println(strForTask5)
 		return
 	}
 
-	/*Получаю число из аргумента. Если ошибка, strForTask5.*/
-	number, err := getNumber()
-	if err != nil {
-		fmt.Println(strForTask5)
-		return
-	}
-
-	switch {
-	case number > 100_000:
-		fmt.Println("too much for me!")
-	case number == 100_000:
-		fmt.Println("one hundred thousand")
-	default:
+	if number != 100000 {
 		fmt.Println(recursiveFunc(number))
+		return
 	}
+	fmt.Println("one hundred thousand")
 }
 
 /*1-99*/
@@ -100,15 +94,6 @@ func recursiveFunc(numberToConvert int) (textNumber string) {
 		}
 	}
 	return
-}
-
-/*Попытка получить число из аргумента.*/
-func getNumber() (int, error) {
-	i, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		return 0, err
-	}
-	return i, nil
 }
 
 /*Возврат текстовой метки в зависимости числа.*/
