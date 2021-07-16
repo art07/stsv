@@ -4,4 +4,5 @@
 ✔️ task3 > <b>triangles</b>;<br>
 ✔️ task4 > <b>parser</b>;<br>
 ✔️ task5 > <b>strnums</b>;<br>
+✔️ task6 > <b>tickets</b>;<br>
 ✔️ ...

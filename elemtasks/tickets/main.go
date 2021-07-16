@@ -1,21 +1,34 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strconv"
 	"strings"
 )
 
-var strForTask6 = "\ntask6 is a tool to check if ticket is lucky.\n" +
-	"Args:\n" +
-	"\targ1> path to file with tickets (C:/elemtasks/task6);\n" +
-	"\targ2> mode ('Moscow' or 'Piter')."
+var strForTask6 = "\ntask6 is a tool to check if tickets is lucky.\n" +
+	"Flags:\n" +
+	"\tflag -h displays help (-h);\n" +
+	"\tflag -f path to file (-f=C:/elemtasks/task4/test.txt);\n" +
+	"\tflag -m mode or 'Moscow' or 'Piter' (-m=Moscow)."
+
+var fFile, fMode string
+var fHelp bool
+
+const noData = "noData"
 
 func main() {
 	//fillTickets()
-	if len(os.Args) != 3 || (os.Args[2] != "Moscow" && os.Args[2] != "Piter") {
+
+	/*Флажки.*/
+	flag.BoolVar(&fHelp, "h", false, "help info")
+	flag.StringVar(&fFile, "f", noData, "path to file")
+	flag.StringVar(&fMode, "m", noData, "mode or 'Moscow' or 'Piter'")
+	flag.Parse()
+
+	if fHelp || fFile == noData || fMode == noData || (fMode != "Moscow" && fMode != "Piter") {
 		fmt.Println(strForTask6)
 		return
 	}
@@ -36,7 +49,7 @@ func main() {
 }
 
 func getTickets() ([]string, error) {
-	bytes, err := ioutil.ReadFile(os.Args[1])
+	bytes, err := ioutil.ReadFile(fFile)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +58,11 @@ func getTickets() ([]string, error) {
 
 func prepareAnswer(luckyTickets []string) (answer string) {
 	return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\n"+
-		"Lucky array > %v", os.Args[2], len(luckyTickets), luckyTickets)
+		"Lucky array > %v", fMode, len(luckyTickets), luckyTickets)
 }
 
 func checkLuckyTickets(tickets []string) ([]string, error) {
-	var luckyTickets []string
-
+	luckyTickets := make([]string, 0, 8)
 	for _, strTicket := range tickets {
 		forFirstNumber := map[bool]string{
 			true:  strTicket[:3],
@@ -61,11 +73,11 @@ func checkLuckyTickets(tickets []string) ([]string, error) {
 			false: string(strTicket[1]) + string(strTicket[3]) + string(strTicket[5]),
 		}
 
-		n1, err := getSum(forFirstNumber[os.Args[2] == "Moscow"])
+		n1, err := getSum(forFirstNumber[fMode == "Moscow"])
 		if err != nil {
 			return nil, err
 		}
-		n2, err := getSum(forSecondNumber[os.Args[2] == "Moscow"])
+		n2, err := getSum(forSecondNumber[fMode == "Moscow"])
 		if err != nil {
 			return nil, err
 		}

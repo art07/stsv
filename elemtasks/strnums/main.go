@@ -9,8 +9,9 @@ import (
 
 var strForTask5 = "task5 is a tool to convert numbers.\n" +
 	"Convert numbers to string view. Max value => 100000; min value => 1.\n" +
-	"Args:\n" +
-	"\targ1 number (12345)."
+	"Flags:\n" +
+	"\tflag -h displays help (-h);\n" +
+	"\tflag -n input number (-n=12345)."
 
 var numbersMap = map[int]string{
 	1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
@@ -21,12 +22,14 @@ var numbersMap = map[int]string{
 }
 
 var number int
+var fHelp bool
 
 func main() {
 	flag.IntVar(&number, "n", 0, "user number")
+	flag.BoolVar(&fHelp, "h", false, "help info")
 	flag.Parse()
 
-	if number < 1 || number > 100000 {
+	if number < 1 || number > 100000 || fHelp {
 		fmt.Println(strForTask5)
 		return
 	}
