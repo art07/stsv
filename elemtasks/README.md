@@ -6,4 +6,4 @@
 ✔️ task5 > <b>strnums</b>;<br>
 ✔️ task6 > <b>tickets</b>;<br>
 ✔️ task7 > <b>strnums</b>;<br>
-✔️ task8 > <b>...</b>.
+✔️ task8 > <b>fiborange</b>.

@@ -1,30 +1,33 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
-	"strconv"
 	"strings"
 )
 
 var strForTask8 = "\ntask8 is a tool which allows to display all Fibonacci numbers that are in the specified range.\n" +
 	"arg1 <= arg2. Min value => 1, max value => 7778742049.\n" +
-	"Args:\n" +
-	"\targ1> number (1-7778742049);\n" +
-	"\targ2> number (1-7778742049)."
+	"Flags:\n" +
+	"\tflag > -h help info (-h);\n" +
+	"\tflag > -n1 number1 (-n1=15);\n" +
+	"\tflag > -n2 number2 (-n2=250)."
+
+var number1, number2 uint64
+var help bool
+
+const minNum = 1
+const maxNum = 7778742049
 
 func main() {
+	/*Флажки.*/
+	flag.BoolVar(&help, "h", false, "help info")
+	flag.Uint64Var(&number1, "n1", 0, "first number")
+	flag.Uint64Var(&number2, "n2", 0, "second number")
+	flag.Parse()
+
 	/*Проверки.*/
-	if len(os.Args) < 3 {
-		fmt.Println(strForTask8)
-		return
-	}
-	i1, i2, err := getUints()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	if i1 > i2 || i1 < 1 || i2 < 1 || i1 > 7778742049 || i2 > 7778742049 {
+	if help || number1 < minNum || number2 < minNum || number1 > number2 || number1 > maxNum || number2 > maxNum {
 		fmt.Println(strForTask8)
 		return
 	}
@@ -37,15 +40,16 @@ func main() {
 	}
 
 	/*Числа фибоначи определенного диапазона.*/
-	str := fmt.Sprintf("Range [%d] - [%d] > \n", i1, i2)
-	for _, number := range fiboArray {
-		if number >= i1 && number <= i2 {
-			str += fmt.Sprintf("%d,", number)
+	var strBuilder strings.Builder
+	_, _ = fmt.Fprintf(&strBuilder, "Range [%d] - [%d] > \n", number1, number2)
+	for _, n := range fiboArray {
+		if n >= number1 && n <= number2 {
+			_, _ = fmt.Fprintf(&strBuilder, "%d,", n)
 		}
 	}
 
 	/*Вывод результата.*/
-	fmt.Println(strings.TrimRight(str, ","))
+	fmt.Println(strings.TrimRight(strBuilder.String(), ","))
 }
 
 func fibonacciFunc() func() uint64 {
@@ -64,17 +68,4 @@ func fibonacciFunc() func() uint64 {
 		loop++
 		return nextFibo
 	}
-}
-
-func getUints() (i1 uint64, i2 uint64, err error) {
-	// https://golang.org/pkg/strconv/#ParseUint
-	i1, err = strconv.ParseUint(os.Args[1], 10, 64)
-	if err != nil {
-		return
-	}
-	i2, err = strconv.ParseUint(os.Args[2], 10, 64)
-	if err != nil {
-		return
-	}
-	return
 }
