@@ -1,37 +1,37 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 )
 
-func fillTickets() {
-	var tickets string
+func fillTickets(filePath string) error {
+	var strBuildTickets strings.Builder
 	for i := 0; i < 100; i++ {
-		tickets += getTicketNumber()
+		strBuildTickets.WriteString(getTicketNumber() + "\n")
 	}
-	if err := writeFile(tickets); err != nil {
-		log.Fatal(err)
+
+	if err := writeFile(strBuildTickets.String(), filePath); err != nil {
+		return err
 	}
-	fmt.Println("Written successfully!")
+	return nil
 }
 
-func getTicketNumber() (ticket string) {
+func getTicketNumber() string {
+	var strBuild strings.Builder
 	for i := 0; i < 6; i++ {
 		rand.Seed(time.Now().UnixNano())
-		ticket += strconv.Itoa(rand.Intn(10))
-		time.Sleep(time.Millisecond * 10)
+		strBuild.WriteString(strconv.Itoa(rand.Intn(10)))
+		time.Sleep(time.Millisecond * 3)
 	}
-	ticket += "\n"
-	return
+	return strBuild.String()
 }
 
-func writeFile(tickets string) error {
-	if err := ioutil.WriteFile("elemtasks/task6/tickets.txt", []byte(tickets), 0); err != nil {
+func writeFile(tickets, filePath string) error {
+	if err := ioutil.WriteFile(filePath, []byte(tickets), 0); err != nil {
 		return err
 	}
 	return nil

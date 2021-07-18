@@ -20,7 +20,10 @@ var fHelp bool
 const noData = "noData"
 
 func main() {
-	//fillTickets()
+	//if err := fillTickets("elemtasks/tickets/tickets.txt"); err != nil {
+	//	fmt.Println(err)
+	//}
+	//return
 
 	/*Флажки.*/
 	flag.BoolVar(&fHelp, "h", false, "help info")
@@ -33,13 +36,13 @@ func main() {
 		return
 	}
 
-	tickets, err := getTickets()
+	tickets, err := getTickets(fFile)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	luckyTickets, err := checkLuckyTickets(tickets)
+	luckyTickets, err := checkLuckyTickets(tickets, fMode)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -48,20 +51,22 @@ func main() {
 	fmt.Println(prepareAnswer(luckyTickets))
 }
 
-func getTickets() ([]string, error) {
-	bytes, err := ioutil.ReadFile(fFile)
+func getTickets(filePath string) ([]string, error) {
+	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
 	return strings.Split(strings.TrimSpace(string(bytes)), "\n"), nil
 }
 
-func prepareAnswer(luckyTickets []string) (answer string) {
-	return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\n"+
-		"Lucky array > %v", fMode, len(luckyTickets), luckyTickets)
+func prepareAnswer(luckyTickets []string) string {
+	if len(luckyTickets) == 0 {
+		return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\n", fMode, len(luckyTickets))
+	}
+	return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\nLucky array > %v\n", fMode, len(luckyTickets), luckyTickets)
 }
 
-func checkLuckyTickets(tickets []string) ([]string, error) {
+func checkLuckyTickets(tickets []string, mode string) ([]string, error) {
 	luckyTickets := make([]string, 0, 8)
 	for _, strTicket := range tickets {
 		forFirstNumber := map[bool]string{
@@ -73,11 +78,11 @@ func checkLuckyTickets(tickets []string) ([]string, error) {
 			false: string(strTicket[1]) + string(strTicket[3]) + string(strTicket[5]),
 		}
 
-		n1, err := getSum(forFirstNumber[fMode == "Moscow"])
+		n1, err := getSum(forFirstNumber[mode == "Moscow"])
 		if err != nil {
 			return nil, err
 		}
-		n2, err := getSum(forSecondNumber[fMode == "Moscow"])
+		n2, err := getSum(forSecondNumber[mode == "Moscow"])
 		if err != nil {
 			return nil, err
 		}
