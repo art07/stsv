@@ -12,16 +12,16 @@ var strForTask4 = "\ntask4 is a tool for jobs with files and strings.\n" +
 	"If -c == noData > Mode #1, else Mode #2.\n" +
 	"Flags:\n" +
 	"\tflag -h displays help (-h);\n" +
-	"\tflag -f path to file (-f=C:/elemtasks/task4/test.txt);\n" +
+	"\tflag -f path to file (-f=C:/elemtasks/task4/text.txt);\n" +
 	"\tflag -s search word (-s=Lorem);\n" +
 	"\tflag -n new word (-n=Lorem123)."
 
-var fFile, fSearch, fNewWord string
-var fHelp bool
-
-const noData = "noData"
-
 func main() {
+	var fFile, fSearch, fNewWord string
+	var fHelp bool
+
+	const noData = "noData"
+
 	/*Флаги.*/
 	flag.BoolVar(&fHelp, "h", false, "help info")
 	flag.StringVar(&fFile, "f", noData, "path to file")
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	if fNewWord == noData {
-		i, err := numberOfOccurrences()
+		i, err := numberOfOccurrences(fFile, fSearch)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -43,23 +43,23 @@ func main() {
 		fmt.Printf("Mode #1\n[%s] meets %d time(s)\n", fSearch, i)
 		return
 	}
-	fmt.Println("Mode #2")
-	if err := changeText(); err != nil {
+	if err := changeText(fFile, fSearch, fNewWord); err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("Mode #2 finished!")
 }
 
-func numberOfOccurrences() (int, error) {
-	buf, err := ioutil.ReadFile(fFile)
+func numberOfOccurrences(filePath, searchWord string) (int, error) {
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return 0, err
 	}
-	return strings.Count(string(buf), fSearch), nil
+	return strings.Count(string(buf), searchWord), nil
 }
 
-func changeText() error {
+func changeText(fFile, fSearch, fNewWord string) error {
+	fmt.Println("Mode #2")
 	buf, err := ioutil.ReadFile(fFile)
 	if err != nil {
 		return err
