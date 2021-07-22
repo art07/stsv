@@ -2,7 +2,7 @@
 ✔️ task1 > <b>chessboard</b>;<br>
 ✔️ task2 > <b>envelopes</b>;<br>
 ✔️ task3 > <b>triangles</b>;<br>
-✔️ task4 > <b>parser</b> (test cover 11.8%);<br>
+✔️ task4 > <b>parser</b> (test cover 27.0%);<br>
 ✔️ task5 > <b>strnums</b>;<br>
 ✔️ task6 > <b>tickets</b> (test cover = 72.4%);<br>
 ✔️ task7 > <b>numsrange</b>;<br>

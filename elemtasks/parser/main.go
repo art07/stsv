@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -16,20 +18,14 @@ var strForTask4 = "\ntask4 is a tool for jobs with files and strings.\n" +
 	"\tflag -s search word (-s=Lorem);\n" +
 	"\tflag -n new word (-n=Lorem123)."
 
+const noData = "noData"
+
 func main() {
 	var fFile, fSearch, fNewWord string
 	var fHelp bool
 
-	const noData = "noData"
-
-	/*Флаги.*/
-	flag.BoolVar(&fHelp, "h", false, "help info")
-	flag.StringVar(&fFile, "f", noData, "path to file")
-	flag.StringVar(&fSearch, "s", noData, "search word")
-	flag.StringVar(&fNewWord, "n", noData, "new word")
-	flag.Parse()
-
-	if fHelp || fFile == noData || fSearch == noData {
+	if err := setFlags(&fHelp, &fFile, &fSearch, &fNewWord); err != nil {
+		fmt.Println(err)
 		fmt.Println(strForTask4)
 		return
 	}
@@ -43,11 +39,25 @@ func main() {
 		fmt.Printf("Mode #1\n[%s] meets %d time(s)\n", fSearch, i)
 		return
 	}
+	fmt.Println("Mode #2")
 	if err := changeText(fFile, fSearch, fNewWord); err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("Mode #2 finished!")
+}
+
+func setFlags(fHelp *bool, fFile, fSearch, fNewWord *string) error {
+	flag.BoolVar(fHelp, "h", false, "help info")
+	flag.StringVar(fFile, "f", noData, "path to file")
+	flag.StringVar(fSearch, "s", noData, "search word")
+	flag.StringVar(fNewWord, "n", noData, "new word")
+	flag.Parse()
+
+	if *fHelp || *fFile == noData || *fSearch == noData {
+		return errors.New("not enough flags data to proceed")
+	}
+	return nil
 }
 
 func numberOfOccurrences(filePath, searchWord string) (int, error) {
@@ -59,13 +69,12 @@ func numberOfOccurrences(filePath, searchWord string) (int, error) {
 }
 
 func changeText(fFile, fSearch, fNewWord string) error {
-	fmt.Println("Mode #2")
 	buf, err := ioutil.ReadFile(fFile)
 	if err != nil {
 		return err
 	}
 	str := strings.ReplaceAll(string(buf), fSearch, fNewWord)
-	if err = ioutil.WriteFile(fFile, []byte(str), 0); err != nil {
+	if err = os.WriteFile(fFile, []byte(str), 0); err != nil {
 		return err
 	}
 	return nil
