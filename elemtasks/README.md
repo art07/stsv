@@ -1,5 +1,5 @@
 ## Elementary Tasks
-✔️ task1 > <b>chessboard</b>;<br>
+✔️ task1 > <b>chessboard</b> (test cover = 57.1%);<br>
 ✔️ task2 > <b>envelopes</b>;<br>
 ✔️ task3 > <b>triangles</b>;<br>
 ✔️ task4 > <b>parser</b> (test cover = 27.0%);<br>
