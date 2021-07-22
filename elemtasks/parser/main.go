@@ -55,7 +55,7 @@ func setFlags(fHelp *bool, fFile, fSearch, fNewWord *string) error {
 	flag.Parse()
 
 	if *fHelp || *fFile == noData || *fSearch == noData {
-		return errors.New("not enough flags data to proceed")
+		return errors.New("not enough flags data to proceed or need help")
 	}
 	return nil
 }
