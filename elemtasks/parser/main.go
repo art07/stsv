@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -23,59 +22,57 @@ const noData = "noData"
 func main() {
 	var fFile, fSearch, fNewWord string
 	var fHelp bool
+	flag.BoolVar(&fHelp, "h", false, "help info")
+	flag.StringVar(&fFile, "f", noData, "path to file")
+	flag.StringVar(&fSearch, "s", noData, "search word")
+	flag.StringVar(&fNewWord, "n", noData, "new word")
+	flag.Parse()
 
-	if err := setFlags(&fHelp, &fFile, &fSearch, &fNewWord); err != nil {
-		fmt.Println(err)
-		fmt.Println(strForTask4)
+	if ok := interrupt(fHelp, fFile, fSearch); ok {
 		return
 	}
 
 	if fNewWord == noData {
 		i, err := numberOfOccurrences(fFile, fSearch)
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
 		fmt.Printf("Mode #1\n[%s] meets %d time(s)\n", fSearch, i)
 		return
 	}
-	fmt.Println("Mode #2")
+
 	if err := changeText(fFile, fSearch, fNewWord); err != nil {
-		fmt.Println(err)
 		return
 	}
-	fmt.Println("Mode #2 finished!")
 }
 
-func setFlags(fHelp *bool, fFile, fSearch, fNewWord *string) error {
-	flag.BoolVar(fHelp, "h", false, "help info")
-	flag.StringVar(fFile, "f", noData, "path to file")
-	flag.StringVar(fSearch, "s", noData, "search word")
-	flag.StringVar(fNewWord, "n", noData, "new word")
-	flag.Parse()
-
-	if *fHelp || *fFile == noData || *fSearch == noData {
-		return errors.New("not enough flags data to proceed or need help")
+func interrupt(fHelp bool, fFile, fSearch string) bool {
+	if fHelp || fFile == noData || fSearch == noData {
+		fmt.Println(strForTask4)
+		return true
 	}
-	return nil
+	return false
 }
 
 func numberOfOccurrences(filePath, searchWord string) (int, error) {
 	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
+		fmt.Println(err)
 		return 0, err
 	}
 	return strings.Count(string(buf), searchWord), nil
 }
 
 func changeText(fFile, fSearch, fNewWord string) error {
+	fmt.Println("Mode #2")
 	buf, err := ioutil.ReadFile(fFile)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	str := strings.ReplaceAll(string(buf), fSearch, fNewWord)
-	if err = os.WriteFile(fFile, []byte(str), 0); err != nil {
-		return err
-	}
+	//goland:noinspection GoUnhandledErrorResult
+	os.WriteFile(fFile, []byte(str), 0)
+	fmt.Println("Mode #2 finished successfully!")
 	return nil
 }

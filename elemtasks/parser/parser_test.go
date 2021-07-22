@@ -6,15 +6,17 @@ import (
 	"testing"
 )
 
-type test struct {
+type Test struct {
+	help       bool
 	filePath   string
 	searchWord string
 	newWord    string
 	wantTimes  int
+	outB       bool
 }
 
 func TestNumberOfOccurrences(t *testing.T) {
-	tests := []test{
+	tests := []Test{
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "0123456789", wantTimes: 0},
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "Lorem", wantTimes: 2},
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text123.txt", searchWord: "Lorem", wantTimes: 0},
@@ -33,7 +35,7 @@ func TestNumberOfOccurrences(t *testing.T) {
 	}
 }
 func TestChangeText(t *testing.T) {
-	tests := []test{
+	tests := []Test{
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "Lorem", newWord: "Lorem1"},
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "0123456789", newWord: "9876543210"},
 		{filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "Lorem1", newWord: "Lorem"},
@@ -47,5 +49,19 @@ func TestChangeText(t *testing.T) {
 		} else {
 			assert.Nil(t, err)
 		}
+	}
+}
+
+func TestInterrupt(t *testing.T) {
+	tests := []Test{
+		{help: true, filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "Lorem", outB: true},
+		{help: false, filePath: noData, searchWord: "Lorem", outB: true},
+		{help: false, filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: noData, outB: true},
+		{help: false, filePath: "D:\\IT\\Golang\\go\\src\\art\\edu\\stsv\\elemtasks\\parser\\text.txt", searchWord: "Lorem", outB: false},
+	}
+
+	for _, test := range tests {
+		result := interrupt(test.help, test.filePath, test.searchWord)
+		assert.Equal(t, test.outB, result)
 	}
 }
