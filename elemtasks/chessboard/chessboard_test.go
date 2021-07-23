@@ -10,21 +10,24 @@ type Test struct {
 	inI  int
 	inI2 int
 	inB  bool
-	outB bool
 	outS string
 }
 
-func TestInterrupt(t *testing.T) {
+func TestFlagValidation(t *testing.T) {
 	tests := []Test{
-		{inI: 0, inI2: 1, inB: false, outB: true},
-		{inI: 1, inI2: 0, inB: false, outB: true},
-		{inI: 1, inI2: 1, inB: true, outB: true},
-		{inI: 1, inI2: 1, inB: false, outB: false},
+		{inI: 0, inI2: 1, inB: false},
+		{inI: 1, inI2: 0, inB: false},
+		{inI: 1, inI2: 1, inB: true},
+		{inI: 1, inI2: 1, inB: false},
 	}
 
 	for _, test := range tests {
-		result := interrupt(test.inI, test.inI2, test.inB)
-		assert.Equal(t, test.outB, result)
+		err := flagValidation(test.inI, test.inI2, test.inB)
+		if err != nil {
+			assert.NotNil(t, err)
+			continue
+		}
+		assert.Nil(t, err)
 	}
 }
 
@@ -38,6 +41,6 @@ func TestGetChessboard(t *testing.T) {
 
 	for _, test := range tests {
 		result := getChessboard(test.inI, test.inI2)
-		assert.Equal(t, test.outS, result)
+		assert.EqualValues(t, test.outS, result)
 	}
 }

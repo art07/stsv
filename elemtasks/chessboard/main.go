@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"strings"
@@ -15,42 +16,45 @@ var strForTask1 = "\ntask1 is a tool for printing chessboard.\n" +
 func main() {
 	var rows, columns int
 	var help bool
-	flag.BoolVar(&help, "h", false, "help")
-	flag.IntVar(&rows, "r", 1, "rows")
-	flag.IntVar(&columns, "c", 1, "columns")
-	flag.Parse()
+	parseFlags(&help, &rows, &columns)
 
-	if ok := interrupt(rows, columns, help); ok {
+	if err := flagValidation(rows, columns, help); err != nil {
+		fmt.Println(err, strForTask1)
 		return
 	}
 
 	fmt.Println(getChessboard(rows, columns))
 }
 
-//goland:noinspection GoUnhandledErrorResult
+func parseFlags(help *bool, rows, columns *int) {
+	flag.BoolVar(help, "h", false, "help")
+	flag.IntVar(rows, "r", 1, "rows")
+	flag.IntVar(columns, "c", 1, "columns")
+	flag.Parse()
+}
+
+func flagValidation(rows, columns int, help bool) error {
+	if rows < 1 || columns < 1 || help {
+		return errors.New("interrupt the app because of flags")
+	}
+	return nil
+}
+
 func getChessboard(rows, columns int) string {
 	var strBuild strings.Builder
 	/*Беру ряд */
 	for i := 1; i <= rows; i++ {
 		/*и вывожу колонку.*/
 		for i := 0; i < columns; i++ {
-			fmt.Fprintf(&strBuild, "%s ", "*")
+			strBuild.WriteString("* ")
 		}
 
 		/*Перехожу на новый ряд или с отступом или без.*/
 		if i%2 != 0 {
-			fmt.Fprint(&strBuild, "\n ")
+			strBuild.WriteString("\n ")
 		} else {
-			fmt.Fprint(&strBuild, "\n")
+			strBuild.WriteString("\n")
 		}
 	}
 	return strings.TrimSpace(strBuild.String())
-}
-
-func interrupt(rows, columns int, help bool) bool {
-	if rows < 1 || columns < 1 || help {
-		fmt.Println(strForTask1)
-		return true
-	}
-	return false
 }
