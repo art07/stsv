@@ -2,40 +2,46 @@
 package main
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 type Test struct {
-	inI  int
-	inB  bool
-	outS string
-	outB bool
+	inBool bool
+	inInt  int
+
+	outErr error
+	outStr string
+}
+
+func TestFlagValidation(t *testing.T) {
+	tests := []Test{
+		{inBool: true, inInt: 1, outErr: errors.New("interrupt the app because of flags")},
+		{inBool: false, inInt: 0, outErr: errors.New("interrupt the app because of flags")},
+		{inBool: false, inInt: 1, outErr: nil},
+	}
+
+	for _, test := range tests {
+		err := flagValidation(test.inBool, test.inInt)
+		if err != nil {
+			assert.NotNil(t, err)
+			assert.EqualError(t, err, test.outErr.Error())
+			continue
+		}
+		assert.Nil(t, err)
+	}
 }
 
 func TestGetRange(t *testing.T) {
 	tests := []Test{
-		{inI: 1, outS: ""},
-		{inI: 5, outS: "1,2"},
-		{inI: 150, outS: "1,2,3,4,5,6,7,8,9,10,11,12"},
+		{inInt: 1, outStr: ""},
+		{inInt: 5, outStr: "1,2"},
+		{inInt: 150, outStr: "1,2,3,4,5,6,7,8,9,10,11,12"},
 	}
 
 	for _, test := range tests {
-		result := getRange(test.inI)
-		assert.Equal(t, test.outS, result)
-	}
-}
-
-func TestInterrupt(t *testing.T) {
-	tests := []Test{
-		{inB: true, inI: 1, outB: true},
-		{inB: false, inI: 1, outB: false},
-		{inB: true, inI: 0, outB: true},
-		{inB: false, inI: 0, outB: true},
-	}
-
-	for _, test := range tests {
-		result := interrupt(test.inB, test.inI)
-		assert.Equal(t, test.outB, result)
+		result := getRange(test.inInt)
+		assert.EqualValues(t, test.outStr, result)
 	}
 }

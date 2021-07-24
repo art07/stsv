@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"strings"
@@ -15,31 +16,34 @@ var strForTask7 = "\ntask7 is a tool to find numbers that in square less than gi
 func main() {
 	var fHelp bool
 	var fNumber int
-	flag.BoolVar(&fHelp, "h", false, "help info")
-	flag.IntVar(&fNumber, "n", 0, "input number")
-	flag.Parse()
+	parseFlags(&fHelp, &fNumber)
 
-	if ok := interrupt(fHelp, fNumber); ok {
-		fmt.Println(strForTask7)
+	if err := flagValidation(fHelp, fNumber); err != nil {
+		fmt.Println(err, strForTask7)
 		return
 	}
 
 	fmt.Println(getRange(fNumber))
 }
 
-func interrupt(fHelp bool, fNumber int) bool {
+func parseFlags(fHelp *bool, fNumber *int) {
+	flag.BoolVar(fHelp, "h", false, "help info")
+	flag.IntVar(fNumber, "n", 0, "input number")
+	flag.Parse()
+}
+
+func flagValidation(fHelp bool, fNumber int) error {
 	if fHelp || fNumber < 1 {
-		return true
+		return errors.New("interrupt the app because of flags")
 	}
-	return false
+	return nil
 }
 
 func getRange(fNumber int) string {
 	var strBuild strings.Builder
 	for i := 1; ; i++ {
 		if (i * i) < fNumber {
-			//goland:noinspection GoUnhandledErrorResult
-			fmt.Fprintf(&strBuild, "%d,", i)
+			strBuild.WriteString(fmt.Sprintf("%d,", i))
 			continue
 		}
 		break
