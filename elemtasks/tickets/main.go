@@ -1,9 +1,14 @@
 package main
 
+//"art/edu/stsv/randtick" [FillTickets function]
+
 import (
+	"bufio"
+	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -14,25 +19,15 @@ var strForTask6 = "\ntask6 is a tool to check if tickets is lucky.\n" +
 	"\tflag -f path to file (-f=C:/elemtasks/task4/test.txt);\n" +
 	"\tflag -m mode or 'Moscow' or 'Piter' (-m=Moscow)."
 
-var fFile, fMode string
-var fHelp bool
-
 const noData = "noData"
 
 func main() {
-	//if err := fillTickets("elemtasks/tickets/tickets.txt"); err != nil {
-	//	fmt.Println(err)
-	//}
-	//return
+	var fFile, fMode string
+	var fHelp bool
+	parseFlags(&fHelp, &fFile, &fMode)
 
-	/*Флажки.*/
-	flag.BoolVar(&fHelp, "h", false, "help info")
-	flag.StringVar(&fFile, "f", noData, "path to file")
-	flag.StringVar(&fMode, "m", noData, "mode or 'Moscow' or 'Piter'")
-	flag.Parse()
-
-	if fHelp || fFile == noData || fMode == noData || (fMode != "Moscow" && fMode != "Piter") {
-		fmt.Println(strForTask6)
+	if err := flagValidation(fHelp, fFile, fMode); err != nil {
+		fmt.Println(err, strForTask6)
 		return
 	}
 
@@ -42,32 +37,56 @@ func main() {
 		return
 	}
 
-	luckyTickets, err := checkLuckyTickets(tickets, fMode)
-	if err != nil {
-		fmt.Println(err)
+	if len(tickets) == 0 {
+		fmt.Println("No tickets to find lucky")
 		return
 	}
 
-	fmt.Println(prepareAnswer(luckyTickets))
+	luckyTickets := checkLuckyTickets(tickets, fMode)
+	if len(luckyTickets) == 0 {
+		fmt.Println("No lucky tickets.")
+		return
+	}
+	fmt.Printf("[%s mode]. Lucky tickets => [%d]\nLucky array > %v\n", fMode, len(luckyTickets), luckyTickets)
 }
 
-func getTickets(filePath string) ([]string, error) {
-	bytes, err := ioutil.ReadFile(filePath)
+func parseFlags(fHelp *bool, fFile, fMode *string) {
+	flag.BoolVar(fHelp, "h", false, "help info")
+	flag.StringVar(fFile, "f", noData, "path to file")
+	flag.StringVar(fMode, "m", noData, "mode or 'Moscow' or 'Piter'")
+	flag.Parse()
+}
+
+func flagValidation(fHelp bool, fFile string, fMode string) error {
+	if fHelp || fFile == noData || fMode == noData || (fMode != "Moscow" && fMode != "Piter") {
+		return errors.New("interrupt the app because of flags")
+	}
+	return nil
+}
+
+func getTickets(filePath string) (tickets []string, err error) {
+	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
-	return strings.Split(strings.TrimSpace(string(bytes)), "\n"), nil
-}
+	//goland:noinspection GoUnhandledErrorResult
+	defer file.Close()
 
-func prepareAnswer(luckyTickets []string) string {
-	if len(luckyTickets) == 0 {
-		return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\n", fMode, len(luckyTickets))
+	snr := bufio.NewScanner(file)
+	for snr.Scan() {
+		ticket := strings.TrimRight(snr.Text(), "\n")
+		if matched, _ := isTicket(ticket); matched {
+			tickets = append(tickets, ticket)
+		}
 	}
-	return fmt.Sprintf("[%s mode]. Lucky tickets in file = [%d]\nLucky array > %v\n", fMode, len(luckyTickets), luckyTickets)
+	return
 }
 
-func checkLuckyTickets(tickets []string, mode string) ([]string, error) {
-	luckyTickets := make([]string, 0, 8)
+func isTicket(ticket string) (bool, error) {
+	return regexp.MatchString(`^[[:digit:]]{6}$`, ticket)
+}
+
+func checkLuckyTickets(tickets []string, mode string) (luckyTickets []string) {
 	for _, strTicket := range tickets {
 		forFirstNumber := map[bool]string{
 			true:  strTicket[:3],
@@ -78,31 +97,18 @@ func checkLuckyTickets(tickets []string, mode string) ([]string, error) {
 			false: string(strTicket[1]) + string(strTicket[3]) + string(strTicket[5]),
 		}
 
-		n1, err := getSum(forFirstNumber[mode == "Moscow"])
-		if err != nil {
-			return nil, err
-		}
-		n2, err := getSum(forSecondNumber[mode == "Moscow"])
-		if err != nil {
-			return nil, err
-		}
-
-		if n1 == n2 {
+		if getSum(forFirstNumber[mode == "Moscow"]) == getSum(forSecondNumber[mode == "Moscow"]) {
 			luckyTickets = append(luckyTickets, strTicket)
 		}
 	}
 
-	return luckyTickets, nil
+	return
 }
 
-func getSum(strNumber string) (int, error) {
-	var sum int
-	for _, n := range strNumber {
-		i, err := strconv.Atoi(string(n))
-		if err != nil {
-			return 0, err
-		}
+func getSum(strNumber string) (sum int) {
+	for _, uCode := range strNumber {
+		i, _ := strconv.Atoi(string(uCode))
 		sum += i
 	}
-	return sum, nil
+	return
 }
