@@ -18,16 +18,17 @@ func main() {
 	for {
 		/*Ввод csv строки.*/
 		fmt.Print("<имя>,<длина стороны>,<длина стороны>,<длина стороны>: ")
+
 		_, err := fmt.Scan(&input)
 		if err != nil {
 			fmt.Println(err)
 			continue
-		} else {
-			dataArr = strings.Split(input, ",")
-			if len(dataArr) != 4 {
-				fmt.Println("Not enough data")
-				continue
-			}
+		}
+
+		dataArr = strings.Split(input, ",")
+		if len(dataArr) != 4 {
+			fmt.Println("Not enough data")
+			continue
 		}
 
 		/*Создать треугольник.*/
@@ -35,11 +36,12 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 			continue
-		} else {
-			triangles = append(triangles, tnl)
 		}
 
+		triangles = append(triangles, tnl)
+
 		fmt.Print("To continue: 'y' or 'yes') > ")
+
 		var answer string
 		_, err = fmt.Scan(&answer)
 		if err != nil {
