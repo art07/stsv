@@ -34,10 +34,8 @@ func runMainLoop() error {
 		checkAnswer := check(envelopes[0], envelopes[1])
 		fmt.Println(checkAnswer, "To continue: 'y' or 'yes') > ")
 
-		userAnswer, err := getAnswerFromUser()
-		if err != nil {
-			return err
-		}
+		var userAnswer string
+		_, _ = fmt.Scan(&userAnswer)
 
 		if isYes(userAnswer) {
 			fmt.Println("Start new circle!")
@@ -46,14 +44,6 @@ func runMainLoop() error {
 		break
 	}
 	return nil
-}
-
-func getAnswerFromUser() (answer string, err error) {
-	_, err = fmt.Scan(&answer)
-	if err != nil {
-		return
-	}
-	return
 }
 
 func setEnvelope(env *envelope) error {
